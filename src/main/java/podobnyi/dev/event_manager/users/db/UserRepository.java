@@ -1,4 +1,4 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.db;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

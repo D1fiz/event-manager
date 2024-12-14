@@ -1,4 +1,4 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.domain;
 
 public record User(
         Long id,

@@ -1,6 +1,8 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.db;
 
 import org.springframework.stereotype.Component;
+import podobnyi.dev.event_manager.users.domain.User;
+import podobnyi.dev.event_manager.users.domain.UserRole;
 
 @Component
 public class UserEntityMapper {

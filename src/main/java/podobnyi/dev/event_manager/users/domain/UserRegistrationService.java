@@ -1,7 +1,8 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.domain;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import podobnyi.dev.event_manager.users.api.SignUpRequest;
 
 @Service
 public class UserRegistrationService {
@@ -14,15 +15,15 @@ public class UserRegistrationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(SignInRequest signInRequest) {
-        if (userService.isUserExistByLogin(signInRequest.login())) {
+    public User registerUser(SignUpRequest signUpRequest) {
+        if (userService.isUserExistByLogin(signUpRequest.login())) {
             throw new IllegalArgumentException("User with such login already exists");
         }
-        var hashedPass = passwordEncoder.encode(signInRequest.password());
+        var hashedPass = passwordEncoder.encode(signUpRequest.password());
         var user = new User(
                 null,
-                signInRequest.login(),
-                signInRequest.age(),
+                signUpRequest.login(),
+                signUpRequest.age(),
                 UserRole.USER,
                 hashedPass
         );

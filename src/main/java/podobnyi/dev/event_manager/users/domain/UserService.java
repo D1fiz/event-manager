@@ -1,8 +1,10 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import podobnyi.dev.event_manager.users.db.UserEntityMapper;
+import podobnyi.dev.event_manager.users.db.UserRepository;
 
 @Service
 public class UserService {

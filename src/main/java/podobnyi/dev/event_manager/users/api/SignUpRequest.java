@@ -1,9 +1,9 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.api;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-public record SignInRequest(
+public record SignUpRequest(
         @NotBlank
         String login,
         @NotBlank

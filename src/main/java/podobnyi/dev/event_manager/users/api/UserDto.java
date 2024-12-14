@@ -1,4 +1,6 @@
-package podobnyi.dev.event_manager.users;
+package podobnyi.dev.event_manager.users.api;
+
+import podobnyi.dev.event_manager.users.domain.UserRole;
 
 public record UserDto(
         Long id,
