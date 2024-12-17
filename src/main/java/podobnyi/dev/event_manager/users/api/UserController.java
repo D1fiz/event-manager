@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import podobnyi.dev.event_manager.security.JwtTokenManager;
+import podobnyi.dev.event_manager.users.domain.AuthenticationService;
 import podobnyi.dev.event_manager.users.domain.User;
 import podobnyi.dev.event_manager.users.domain.UserRegistrationService;
 import podobnyi.dev.event_manager.users.domain.UserService;
@@ -21,14 +21,15 @@ public class UserController {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
     private final UserRegistrationService userRegistrationService;
 
-    private final JwtTokenManager jwtTokenManager;
 
-    public UserController(UserService userService, UserRegistrationService userRegistrationService, JwtTokenManager jwtTokenManager) {
+    public UserController(UserService userService, AuthenticationService authenticationService, UserRegistrationService userRegistrationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
         this.userRegistrationService = userRegistrationService;
-        this.jwtTokenManager = jwtTokenManager;
+
     }
 
     @PostMapping
@@ -39,11 +40,6 @@ public class UserController {
       var user=  userRegistrationService.registerUser(signUpRequest);
 
 
-      var token=jwtTokenManager.generateToken(user);
-      log.info("token = {}",token);
-      log.info("valid = {}",jwtTokenManager.isTokenValid(token));
-      log.info("login = {}",jwtTokenManager.getLoginFromToken(token));
-
       return ResponseEntity.status(201).body(convertDomainUser(user));
     }
 
@@ -51,7 +47,8 @@ public class UserController {
     public ResponseEntity<JwtTokenResponse> authenticate(@RequestBody @Valid SingInRequest singInRequest){
 
       log.info("Get request for authenticate user,login={}",singInRequest.login());
-    return null;
+      var token=authenticationService.authenticateUser(singInRequest);
+      return ResponseEntity.ok(new JwtTokenResponse(token));
     }
 
 
