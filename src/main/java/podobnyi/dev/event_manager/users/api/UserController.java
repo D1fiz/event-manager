@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import podobnyi.dev.event_manager.users.domain.AuthenticationService;
 import podobnyi.dev.event_manager.users.domain.User;
 import podobnyi.dev.event_manager.users.domain.UserRegistrationService;
@@ -52,7 +49,14 @@ public class UserController {
     }
 
 
-
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserInfo(
+            @PathVariable Long userId
+    ){
+        log.info("Get request for user info: userId={}",userId);
+       var user= userService.getUserById(userId);
+       return ResponseEntity.ok(convertDomainUser(user));
+    }
 
 
     private UserDto convertDomainUser(User user){

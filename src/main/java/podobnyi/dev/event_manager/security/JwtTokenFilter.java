@@ -42,12 +42,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         var role=jwtTokenManager.getRoleFromToken(jwtToken);
 
 
-        UsernamePasswordAuthenticationToken token=new UsernamePasswordAuthenticationToken(
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 login,
                 null,
                 List.of(new SimpleGrantedAuthority(role))
         );
-        SecurityContextHolder.getContext().getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(token);
         filterChain.doFilter(request,response);
     }
+
 }

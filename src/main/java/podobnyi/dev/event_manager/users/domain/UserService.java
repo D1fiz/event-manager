@@ -34,4 +34,10 @@ public class UserService {
                 .orElseThrow(()->new EntityNotFoundException("User wasn't found by login=%s"
                         .formatted(login)));
     }
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(userEntityMapper::toDomain)
+                .orElseThrow(()->new EntityNotFoundException("User wasn't found by id=%s"
+                        .formatted(userId)));
+    }
 }

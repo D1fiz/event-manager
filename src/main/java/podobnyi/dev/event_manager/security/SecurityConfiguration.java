@@ -19,17 +19,18 @@ public class SecurityConfiguration {
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
-
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.debug(true).ignoring()
                 .requestMatchers("/css/**",
                         "/img/**",
@@ -46,25 +47,26 @@ public class SecurityConfiguration {
                         "/v3/api-docs/swagger-config",
                         "/openapi.yaml");
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .formLogin(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exceptionHandling->exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
-                        .accessDeniedHandler())
-                .authorizeHttpRequests(authorizeHttpRequest-> authorizeHttpRequest
-                        .requestMatchers(HttpMethod.POST,"/users").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/users/auth").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/users/{userId}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/locations").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/locations/{locationId}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/locations/{locationId}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/locations/**").hasAnyRole("ADMIN","USER")
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
+                .authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/auth").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{userId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/locations").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/locations/{locationId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/locations/{locationId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/locations/**").hasAnyAuthority("ADMIN", "USER")
                         .anyRequest().authenticated()
-                 )
+                )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
