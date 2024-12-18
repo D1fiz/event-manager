@@ -5,34 +5,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private final static Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<Object> handlerCommonException(Exception exception) {
-        log.error("Handler common exception", exception);
-        ErrorMassageResponse massageResponse = new ErrorMassageResponse("Internal error", exception.getMessage(), LocalDateTime.now());
-        return ResponseEntity.status(500).body(massageResponse);
+    public ResponseEntity<Object> handleCommonException(Exception exception) {
+        log.error("Handle common exception", exception);
+        ErrorMessageResponse messageResponse = new ErrorMessageResponse(
+                "Internal error",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(500)
+                .body(messageResponse);
     }
 
     @ExceptionHandler(value = EntityNotFoundException.class)
-    public ResponseEntity<Object> handlerNotFound(Exception exception) {
-        log.error("Handler entity not found exception", exception);
-        ErrorMassageResponse massageResponse = new ErrorMassageResponse("Entity not found", exception.getMessage(), LocalDateTime.now());
-        return ResponseEntity.status(404).body(massageResponse);
+    public ResponseEntity<Object> handleNotFound(Exception exception) {
+        log.error("Handle entity not found exception", exception);
+        ErrorMessageResponse messageResponse = new ErrorMessageResponse(
+                "Entity not found",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(404)
+                .body(messageResponse);
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity<Object> handlerIllegalArgument(Exception exception) {
-        log.error("Handler bad request exception", exception);
-        ErrorMassageResponse massageResponse = new ErrorMassageResponse("Bad request", exception.getMessage(), LocalDateTime.now());
-        return ResponseEntity.status(400).body(massageResponse);
+    @ExceptionHandler(value = {
+            IllegalArgumentException.class,
+            MethodArgumentNotValidException.class
+    })
+    public ResponseEntity<Object> handleIllegalArgument(Exception exception) {
+        log.error("Handle bad request exception", exception);
+        ErrorMessageResponse messageResponse = new ErrorMessageResponse(
+                "Bad request",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(400)
+                .body(messageResponse);
     }
+
 }
