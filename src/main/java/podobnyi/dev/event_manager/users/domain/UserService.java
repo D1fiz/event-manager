@@ -1,5 +1,6 @@
 package podobnyi.dev.event_manager.users.domain;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,18 @@ public class UserService {
     }
     public boolean isUserExistByLogin(String login){
         return userRepository.findByLogin(login).isPresent();
+    }
+
+    public User getUserByLogin(String login) {
+        return userRepository.findByLogin(login)
+                .map(userEntityMapper::toDomain)
+                .orElseThrow(()->new EntityNotFoundException("User wasn't found by login=%s"
+                        .formatted(login)));
+    }
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(userEntityMapper::toDomain)
+                .orElseThrow(()->new EntityNotFoundException("User wasn't found by id=%s"
+                        .formatted(userId)));
     }
 }

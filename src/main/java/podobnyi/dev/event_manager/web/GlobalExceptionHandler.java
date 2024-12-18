@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -54,6 +55,19 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(400)
+                .body(messageResponse);
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentials(Exception exception) {
+        log.error("Handle bad credentials found exception", exception);
+        ErrorMessageResponse messageResponse = new ErrorMessageResponse(
+                "Failed to authenticate",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(401)
                 .body(messageResponse);
     }
 
